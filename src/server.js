@@ -3,8 +3,8 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
+import notesRouter from './routers/notes.js';
 import { getEnvVar } from './utils/getEnvVar.js';
-import { getNoteById, getNotes } from './services/notes.js';
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
@@ -24,25 +24,8 @@ export const startServer = () => {
     }),
   );
 
-  app.get('/notes', async (req, res) => {
-    const notes = await getNotes();
-    res.status(200).json({
-      data: notes,
-    });
-  });
-
-  app.get('/notes/:id', async (req, res, next) => {
-    const note = await getNoteById(req.params.id);
-    if (!note) {
-      res.status(404).json({
-        message: 'Note not found',
-      });
-      return next();
-    }
-    res.status(200).json({
-      data: note,
-    });
-  });
+  // Додаємо роутер до app як middleware
+  app.use(notesRouter);
 
   //клієнт звертається до неіснуючого маршруту
   app.use((req, res, next) => {

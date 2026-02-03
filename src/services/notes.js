@@ -4,6 +4,6 @@ export const getNotes = async () => {
   return await NotesCollection.find();
 };
 
-export const getNoteById = async (id) => {
-  return await NotesCollection.findById(id);
+export const getNoteById = async (noteId) => {
+  return await NotesCollection.findById(noteId);
 };
