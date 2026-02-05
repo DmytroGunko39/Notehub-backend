@@ -3,8 +3,13 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import notesRouter from './routers/notes.js';
+import authRouter from './routers/auth.js';
+import usersRouter from './routers/users.js';
 import { getEnvVar } from './utils/getEnvVar.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
@@ -14,6 +19,7 @@ export const startServer = () => {
   //Обробка JSON-даних
   app.use(express.json());
   app.use(cors());
+  app.use(cookieParser());
 
   //Логування запитів - слідкувати за тим, як працює система, особливо, коли вона має проблеми.
   app.use(
@@ -24,23 +30,16 @@ export const startServer = () => {
     }),
   );
 
-  // Додаємо роутер до app як middleware
+  // Додаємо роутери до app як middleware
+  app.use(authRouter);
   app.use(notesRouter);
+  app.use(usersRouter);
 
   //клієнт звертається до неіснуючого маршруту
-  app.use((req, res, next) => {
-    res.status(404).json({
-      message: 'Not found',
-    });
-  });
+  app.use(notFoundHandler);
 
   //коли виникає непередбачувана помилка
-  app.use((err, req, res, next) => {
-    res.status(500).json({
-      message: 'Something went wrong',
-      error: err.message,
-    });
-  });
+  app.use(errorHandler);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
