@@ -4,7 +4,7 @@ const sessionSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
       required: true,
       index: true,
     },
@@ -19,10 +19,14 @@ const sessionSchema = new mongoose.Schema(
     accessTokenValidUntil: {
       type: Date,
       required: true,
+      unique: true,
+      index: true,
     },
     refreshTokenValidUntil: {
       type: Date,
       required: true,
+      unique: true,
+      index: true,
     },
   },
   {
@@ -31,6 +35,6 @@ const sessionSchema = new mongoose.Schema(
   },
 );
 
-const SessionsCollection = mongoose.model('session', sessionSchema);
+const SessionsCollection = mongoose.model('Session', sessionSchema);
 
 export default SessionsCollection;

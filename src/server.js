@@ -10,6 +10,7 @@ import usersRouter from './routers/users.js';
 import { getEnvVar } from './utils/getEnvVar.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { authRateLimiter } from './middlewares/rateLimit.js';
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
@@ -31,7 +32,7 @@ export const startServer = () => {
   );
 
   // Додаємо роутери до app як middleware
-  app.use(authRouter);
+  app.use(authRouter, authRateLimiter);
   app.use(notesRouter);
   app.use(usersRouter);
 
