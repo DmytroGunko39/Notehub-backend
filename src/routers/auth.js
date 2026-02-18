@@ -19,29 +19,25 @@ import {
 const router = Router();
 
 router.post(
-  '/auth/register',
+  '/register',
   validateBody(registerSchema),
   ctrlWrapper(registerController),
 );
 
-router.post(
-  '/auth/login',
-  validateBody(loginSchema),
-  ctrlWrapper(loginController),
-);
+router.post('/login', validateBody(loginSchema), ctrlWrapper(loginController));
 
-router.post('/auth/logout', ctrlWrapper(logoutController));
+router.post('/logout', ctrlWrapper(logoutController));
 
-router.get('/auth/session', ctrlWrapper(refreshSessionController));
+router.get('/session', ctrlWrapper(refreshSessionController));
 
 router.post(
-  '/auth/forgot-password',
+  '/forgot-password',
   validateBody(forgotPasswordSchema),
   ctrlWrapper(forgotPasswordController),
 );
 
 router.post(
-  '/auth/reset-password',
+  '/reset-password',
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPasswordController),
 );

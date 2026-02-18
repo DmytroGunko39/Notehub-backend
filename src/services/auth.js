@@ -144,6 +144,7 @@ export const resetPassword = async (token, newPassword) => {
   await user.save();
 
   await SessionsCollection.deleteMany({ userId: user._id });
+  return { message: 'Password reset successful' };
 };
 
 export const getSessionByAccessToken = async (accessToken) => {

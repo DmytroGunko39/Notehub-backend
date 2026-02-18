@@ -9,10 +9,10 @@ const router = Router();
 
 router.use(authenticate);
 
-router.get('/users/me', ctrlWrapper(getMeController));
+router.get('/me', ctrlWrapper(getMeController));
 
 router.patch(
-  '/users/me',
+  '/me',
   validateBody(updateUserSchema),
   ctrlWrapper(updateMeController),
 );

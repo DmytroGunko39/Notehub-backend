@@ -32,9 +32,9 @@ export const startServer = () => {
   );
 
   // Додаємо роутери до app як middleware
-  app.use(authRouter, authRateLimiter);
-  app.use(notesRouter);
-  app.use(usersRouter);
+  app.use('/auth', authRateLimiter, authRouter);
+  app.use('/notes', notesRouter);
+  app.use('/users', usersRouter);
 
   //клієнт звертається до неіснуючого маршруту
   app.use(notFoundHandler);

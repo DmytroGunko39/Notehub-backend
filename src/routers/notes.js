@@ -16,29 +16,25 @@ const router = Router();
 
 router.use(authenticate);
 
-router.get('/notes', ctrlWrapper(getNotesController));
+router.get('/', ctrlWrapper(getNotesController));
 
 router.post(
-  '/notes',
+  '/',
   validateBody(createNoteSchema),
   ctrlWrapper(createNoteController),
 );
 
-router.get(
-  '/notes/:noteId',
-  isValidId('noteId'),
-  ctrlWrapper(getNoteByIdController),
-);
+router.get('/:noteId', isValidId('noteId'), ctrlWrapper(getNoteByIdController));
 
 router.patch(
-  '/notes/:noteId',
+  '/:noteId',
   isValidId('noteId'),
   validateBody(updateNoteSchema),
   ctrlWrapper(updateNoteController),
 );
 
 router.delete(
-  '/notes/:noteId',
+  '/:noteId',
   isValidId('noteId'),
   ctrlWrapper(deleteNoteController),
 );

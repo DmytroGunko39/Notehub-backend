@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import createHttpError from 'http-errors';
 import UsersCollection from '../db/models/user.js';
 
 export const getUserById = async (userId) => {
@@ -10,10 +11,17 @@ export const updateUser = async (userId, updateData) => {
     updateData.password = await bcrypt.hash(updateData.password, 10);
   }
 
-  const user = await UsersCollection.findByIdAndUpdate(userId, updateData, {
-    new: true,
-    runValidators: true,
-  });
+  try {
+    const user = await UsersCollection.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
-  return user;
+    return user;
+  } catch (error) {
+    if (error.code === 11000) {
+      throw createHttpError(409, 'Email already in use');
+    }
+    throw error;
+  }
 };
