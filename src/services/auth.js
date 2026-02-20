@@ -12,7 +12,7 @@ import {
   RESET_PASSWORD_TOKEN_LIFETIME,
 } from '../constants/index.js';
 
-export const registerUser = async ({ name, email, password }) => {
+export const registerUser = async ({ email, password }) => {
   const existingUser = await UsersCollection.findOne({ email });
   if (existingUser) {
     throw createHttpError(409, 'Email already in use');
@@ -20,7 +20,6 @@ export const registerUser = async ({ name, email, password }) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await UsersCollection.create({
-    name,
     email,
     password: hashedPassword,
   });
