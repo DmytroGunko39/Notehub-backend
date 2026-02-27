@@ -15,10 +15,11 @@ export const getMeController = async (req, res) => {
 };
 
 export const updateMeController = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, avatar, email, password } = req.body;
 
   const updateData = {};
   if (name !== undefined) updateData.name = name;
+  if (avatar !== undefined) updateData.avatar = avatar;
   if (email !== undefined) updateData.email = email;
   if (password !== undefined) updateData.password = password;
 

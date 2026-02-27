@@ -110,6 +110,11 @@ export const requestPasswordReset = async (email) => {
   const frontendUrl = getEnvVar('FRONTEND_URL', 'http://localhost:3000');
   const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
 
+  if (!process.env.SMTP_HOST) {
+    console.warn('SMTP not configured. Reset URL:', resetUrl);
+    return;
+  }
+
   await sendEmail({
     to: user.email,
     subject: 'Password Reset Request',
