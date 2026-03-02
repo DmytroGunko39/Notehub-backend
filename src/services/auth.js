@@ -118,11 +118,11 @@ export const requestPasswordReset = async (email) => {
   console.log('[forgot-password] Step 4: Reset URL generated:', resetUrl);
 
   console.log(
-    '[forgot-password] Step 5: Checking SMTP_HOST:',
-    process.env.SMTP_HOST ? 'SET' : 'NOT SET',
+    '[forgot-password] Step 5: Checking BREVO_API_KEY:',
+    process.env.BREVO_API_KEY ? 'SET' : 'NOT SET',
   );
-  if (!process.env.SMTP_HOST) {
-    console.warn('SMTP not configured. Reset URL:', resetUrl);
+  if (!process.env.BREVO_API_KEY) {
+    console.warn('Brevo not configured. Reset URL:', resetUrl);
     return;
   }
 

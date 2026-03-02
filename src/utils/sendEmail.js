@@ -1,37 +1,53 @@
-import nodemailer from 'nodemailer';
 import { getEnvVar } from './getEnvVar.js';
 
-//Lazy-Load the transporter
-let transporter;
-function getTransporter() {
-  if (!transporter) {
-    if (!process.env.SMTP_HOST) {
-      throw new Error('SMTP not configured');
-    }
-    transporter = nodemailer.createTransport({
-      host: getEnvVar('SMTP_HOST'),
-      port: Number(getEnvVar('SMTP_PORT')),
-      secure: false,
-      auth: {
-        user: getEnvVar('SMTP_USER'),
-        pass: getEnvVar('SMTP_PASSWORD'),
-      },
-    });
-  }
-  return transporter;
-}
+// Brevo (Sendinblue) REST API endpoint for sending transactional emails
+const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
+/**
+ * Send an email using Brevo REST API
+ * @param {Object} options - Email options
+ * @param {string} options.to - Recipient email address
+ * @param {string} options.subject - Email subject
+ * @param {string} options.html - HTML content of the email
+ */
 export const sendEmail = async ({ to, subject, html }) => {
-  const transporter = getTransporter();
+  // Step 1: Get the API key from environment variables
+  const apiKey = getEnvVar('BREVO_API_KEY');
+  const senderEmail = getEnvVar('BREVO_SENDER_EMAIL');
+  const senderName = getEnvVar('BREVO_SENDER_NAME', 'NoteHubApp');
 
-  console.log('[SMTP] Verifying connection...');
-  await transporter.verify();
-  console.log('[SMTP] Connection verified successfully');
+  // Step 2: Prepare the request body for Brevo API
+  const emailData = {
+    sender: {
+      name: senderName,
+      email: senderEmail,
+    },
+    to: [{ email: to }],
+    subject: subject,
+    htmlContent: html,
+  };
 
-  await transporter.sendMail({
-    from: getEnvVar('SMTP_FROM'),
-    to,
-    subject,
-    html,
+  console.log('[Brevo] Sending email to:', to);
+
+  // Step 3: Send the HTTP request to Brevo API
+  const response = await fetch(BREVO_API_URL, {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'api-key': apiKey,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(emailData),
   });
+
+  // Step 4: Check if the request was successful
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage =
+      errorData.message || `Brevo API error: ${response.status}`;
+    console.error('[Brevo] Failed to send email:', errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  console.log('[Brevo] Email sent successfully to:', to);
 };
