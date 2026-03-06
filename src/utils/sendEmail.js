@@ -27,8 +27,6 @@ export const sendEmail = async ({ to, subject, html }) => {
     htmlContent: html,
   };
 
-  console.log('[Brevo] Sending email to:', to);
-
   // Step 3: Send the HTTP request to Brevo API
   const response = await fetch(BREVO_API_URL, {
     method: 'POST',
@@ -45,9 +43,6 @@ export const sendEmail = async ({ to, subject, html }) => {
     const errorData = await response.json().catch(() => ({}));
     const errorMessage =
       errorData.message || `Brevo API error: ${response.status}`;
-    console.error('[Brevo] Failed to send email:', errorMessage);
     throw new Error(errorMessage);
   }
-
-  console.log('[Brevo] Email sent successfully to:', to);
 };

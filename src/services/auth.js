@@ -90,15 +90,11 @@ export const refreshSession = async (refreshToken) => {
 };
 
 export const requestPasswordReset = async (email) => {
-  console.log('[forgot-password] Step 1: Finding user with email:', email);
   const user = await UsersCollection.findOne({ email });
   if (!user) {
-    console.log('[forgot-password] User not found, returning silently');
     return;
   }
-  console.log('[forgot-password] User found:', user._id);
 
-  console.log('[forgot-password] Step 2: Generating token');
   const resetToken = crypto.randomBytes(32).toString('hex');
   const hashedToken = crypto
     .createHash('sha256')
@@ -109,44 +105,26 @@ export const requestPasswordReset = async (email) => {
   user.resetPasswordExpires = new Date(
     Date.now() + RESET_PASSWORD_TOKEN_LIFETIME,
   );
-  console.log('[forgot-password] Step 3: Saving user');
   await user.save();
-  console.log('[forgot-password] User saved successfully');
 
   const frontendUrl = getEnvVar('FRONTEND_URL', 'http://localhost:3000');
   const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
-  console.log('[forgot-password] Step 4: Reset URL generated:', resetUrl);
 
-  console.log(
-    '[forgot-password] Step 5: Checking BREVO_API_KEY:',
-    process.env.BREVO_API_KEY ? 'SET' : 'NOT SET',
-  );
   if (!process.env.BREVO_API_KEY) {
-    console.warn('Brevo not configured. Reset URL:', resetUrl);
     return;
   }
 
-  console.log('[forgot-password] Step 6: Attempting to send email');
-  try {
-    await sendEmail({
-      to: user.email,
-      subject: 'Password Reset Request',
-      html: `
-        <h1>Password Reset</h1>
-        <p>You requested a password reset. Click the link below to reset your password:</p>
-        <a href="${resetUrl}">Reset Password</a>
-        <p>This link will expire in 1 hour.</p>
-        <p>If you did not request this, please ignore this email.</p>
-      `,
-    });
-    console.log('[forgot-password] Email sent successfully');
-  } catch (err) {
-    console.error(
-      '[forgot-password] Step 6 FAILED - Email error:',
-      err.message,
-    );
-    throw err;
-  }
+  await sendEmail({
+    to: user.email,
+    subject: 'Password Reset Request',
+    html: `
+      <h1>Password Reset</h1>
+      <p>You requested a password reset. Click the link below to reset your password:</p>
+      <a href="${resetUrl}">Reset Password</a>
+      <p>This link will expire in 1 hour.</p>
+      <p>If you did not request this, please ignore this email.</p>
+    `,
+  });
 };
 
 export const resetPassword = async (token, newPassword) => {
