@@ -12,14 +12,14 @@ import { REFRESH_TOKEN_LIFETIME } from '../constants/index.js';
 const setupCookies = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: true,
+    sameSite: 'none',
     maxAge: REFRESH_TOKEN_LIFETIME,
   });
   res.cookie('sessionId', session._id.toString(), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: true,
+    sameSite: 'none',
     maxAge: REFRESH_TOKEN_LIFETIME,
   });
 };
