@@ -1,5 +1,3 @@
-//файл, де ми опишемо наш express-сервер
-
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
@@ -19,7 +17,12 @@ export const startServer = () => {
 
   //Обробка JSON-даних
   app.use(express.json());
-  app.use(cors());
+  app.use(
+    cors({
+      origin: 'https://09-auth-kappa-lyart.vercel.app',
+      credentials: true,
+    }),
+  );
   app.use(cookieParser());
 
   //Логування запитів - слідкувати за тим, як працює система, особливо, коли вона має проблеми.
