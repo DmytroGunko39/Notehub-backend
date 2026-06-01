@@ -14,6 +14,7 @@ const PORT = Number(getEnvVar('PORT', '3000'));
 
 export const startServer = () => {
   const app = express();
+  app.set('trust proxy', 1);
 
   //Обробка JSON-даних
   app.use(express.json());
