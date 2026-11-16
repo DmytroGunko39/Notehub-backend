@@ -1,13 +1,13 @@
 import Joi from 'joi';
 
 export const createNoteSchema = Joi.object({
-  title: Joi.string().min(1).max(200).required(),
+  title: Joi.string().min(1).max(50).required(),
   content: Joi.string().min(1).required(),
   tag: Joi.string().max(50).allow(null, ''),
 });
 
 export const updateNoteSchema = Joi.object({
-  title: Joi.string().min(1).max(200),
+  title: Joi.string().min(1).max(50),
   content: Joi.string().min(1),
   tag: Joi.string().max(50).allow(null, ''),
 }).min(1);
