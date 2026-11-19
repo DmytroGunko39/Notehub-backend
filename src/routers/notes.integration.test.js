@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../server.js';
+import { setupTestDb } from '../tests/setupTestDb.js';
 
 describe('GET /notes', () => {
+  setupTestDb();
+
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });

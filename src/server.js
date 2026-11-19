@@ -28,6 +28,7 @@ export const createApp = () => {
   //Request logging - keeps track of how the system behaves, especially when it runs into problems.
   app.use(
     pino({
+      enabled: process.env.NODE_ENV !== 'test',
       transport:
         process.env.NODE_ENV !== 'production'
           ? { target: 'pino-pretty' }
