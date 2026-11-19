@@ -5,6 +5,8 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint src/**/*.js",
     "start": "node ./src/index.js",
     "dev": "nodemon src/index.js"
