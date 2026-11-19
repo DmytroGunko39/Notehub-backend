@@ -12,7 +12,7 @@ import { authRateLimiter } from './middlewares/rateLimit.js';
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
-export const startServer = () => {
+export const createApp = () => {
   const app = express();
   app.set('trust proxy', 1);
 
@@ -53,6 +53,12 @@ export const startServer = () => {
   app.use(notFoundHandler);
 
   app.use(errorHandler);
+
+  return app;
+};
+
+export const startServer = () => {
+  const app = createApp();
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
