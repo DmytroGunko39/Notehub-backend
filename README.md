@@ -8,7 +8,11 @@ pagination. Every note belongs to a user and is only ever readable or writable b
 its owner. The web client is a separate repository and consumes this API over HTTP.
 
 **Live API:** https://notehub-backend-nke3.onrender.com
-**Frontend repository:** https://09-auth-kappa-lyart.vercel.app/
+
+> Hosted on Render's free tier — the service sleeps when idle, so the first
+> request may take up to a minute.
+
+**Frontend repository:** https://09-auth-kappa-lyart.vercel.app
 
 ## Tech stack
 
@@ -56,18 +60,21 @@ npm install
 Create a `.env` file in the project root. The variables below are the ones the code
 reads; `src/utils/getEnvVar.js` throws on startup if a required one is missing.
 
-| Variable             | Required        | Purpose                                                                                  |
-| -------------------- | --------------- | ---------------------------------------------------------------------------------------- |
-| `PORT`               | No              | Port the HTTP server listens on. Defaults to `3000`.                                     |
-| `MONGODB_USER`       | Yes             | MongoDB Atlas database user.                                                             |
-| `MONGODB_PASSWORD`   | Yes             | Password for that user.                                                                  |
-| `MONGODB_URL`        | Yes             | Atlas cluster host, e.g. the `cluster0.xxxxx.mongodb.net` part of the connection string. |
-| `MONGODB_DB`         | Yes             | Name of the database to connect to.                                                      |
-| `BREVO_API_KEY`      | No              | Brevo API key. If unset, password reset silently skips sending the email.                |
-| `BREVO_SENDER_EMAIL` | Only with Brevo | Verified sender address for outgoing email.                                              |
-| `BREVO_SENDER_NAME`  | No              | Sender display name. Defaults to `NoteHubApp`.                                           |
-| `FRONTEND_URL`       | No              | Base URL used to build the password-reset link. Defaults to `http://localhost:3000`.     |
-| `NODE_ENV`           | No              | Set to `production` to disable pretty logging and error stack output.                    |
+| Variable             | Required        | Purpose                                                                                                |
+| -------------------- | --------------- | ------------------------------------------------------------------------------------------------------ |
+| `PORT`               | No              | Port the HTTP server listens on. Defaults to `3000`.                                                   |
+| `MONGODB_USER`       | Yes             | MongoDB Atlas database user.                                                                           |
+| `MONGODB_PASSWORD`   | Yes             | Password for that user.                                                                                |
+| `MONGODB_URL`        | Yes             | Atlas cluster host, e.g. the `cluster0.xxxxx.mongodb.net` part of the connection string.               |
+| `MONGODB_DB`         | Yes             | Name of the database to connect to.                                                                    |
+| `BREVO_API_KEY`      | No              | Brevo API key. If unset, password reset silently skips sending the email.                              |
+| `BREVO_SENDER_EMAIL` | Only with Brevo | Verified sender address for outgoing email.                                                            |
+| `BREVO_SENDER_NAME`  | No              | Sender display name. Defaults to `NoteHubApp`.                                                         |
+| `FRONTEND_URL`       | Yes             | Origin of the web client. Used as the allowed CORS origin and as the base URL in password-reset links. |
+| `NODE_ENV`           | No              | Set to `production` to disable pretty logging and error stack output.                                  |
+
+The server reads `FRONTEND_URL` when it configures CORS, so it fails to start if
+that variable is not set.
 
 A template with the same keys and no values is in `.env.example`.
 
@@ -79,10 +86,6 @@ npm start      # plain node
 npm run lint   # ESLint
 ```
 
-Note that the allowed CORS origin is currently hardcoded in `src/server.js` and
-credentials are enabled, so a frontend served from a different origin needs that
-value changed.
-
 ## API endpoints
 
 All responses are JSON in the shape `{ status, message, data }`, except `204 No
@@ -92,6 +95,7 @@ instead. All `/auth` routes are rate limited.
 
 | Method | Path                    | Auth                    | Description                                                                                                                 |
 | ------ | ----------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/`                     | No                      | Service status check. Confirms the API is reachable.                                                                        |
 | POST   | `/auth/register`        | No                      | Register with `email` and `password`. Returns the created user.                                                             |
 | POST   | `/auth/login`           | No                      | Log in. Returns an access token and sets the `refreshToken` and `sessionId` cookies.                                        |
 | POST   | `/auth/logout`          | Cookie (`sessionId`)    | Delete the session and clear both cookies. Returns `204`.                                                                   |

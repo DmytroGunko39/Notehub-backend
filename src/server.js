@@ -16,7 +16,6 @@ export const startServer = () => {
   const app = express();
   app.set('trust proxy', 1);
 
-  //Обробка JSON-даних
   app.use(express.json());
   app.use(
     cors({
@@ -26,7 +25,7 @@ export const startServer = () => {
   );
   app.use(cookieParser());
 
-  //Логування запитів - слідкувати за тим, як працює система, особливо, коли вона має проблеми.
+  //Request logging - keeps track of how the system behaves, especially when it runs into problems.
   app.use(
     pino({
       transport:
@@ -36,7 +35,6 @@ export const startServer = () => {
     }),
   );
 
-  // Додаємо роутери до app як middleware
   app.use('/auth', authRateLimiter, authRouter);
   app.use('/notes', notesRouter);
   app.use('/users', usersRouter);
@@ -52,10 +50,8 @@ export const startServer = () => {
     });
   });
 
-  //клієнт звертається до неіснуючого маршруту
   app.use(notFoundHandler);
 
-  //коли виникає непередбачувана помилка
   app.use(errorHandler);
 
   app.listen(PORT, () => {
