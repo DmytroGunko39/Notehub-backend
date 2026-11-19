@@ -20,7 +20,7 @@ export const startServer = () => {
   app.use(express.json());
   app.use(
     cors({
-      origin: 'https://09-auth-kappa-lyart.vercel.app',
+      origin: getEnvVar('FRONTEND_URL'),
       credentials: true,
     }),
   );
@@ -40,6 +40,17 @@ export const startServer = () => {
   app.use('/auth', authRateLimiter, authRouter);
   app.use('/notes', notesRouter);
   app.use('/users', usersRouter);
+
+  // Root endpoint — confirms the API is reachable
+  app.get('/', (req, res) => {
+    res.json({
+      status: 200,
+      message: 'NoteHub API is running',
+      data: {
+        docs: 'https://github.com/DmytroGunko39/Notehub-backend',
+      },
+    });
+  });
 
   //клієнт звертається до неіснуючого маршруту
   app.use(notFoundHandler);
