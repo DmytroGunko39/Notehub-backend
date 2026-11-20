@@ -11,6 +11,7 @@ describe('POST /auth/register', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
+  // Test for successful user registration
   it('creates a user and never returns the password', async () => {
     const app = createApp();
 
@@ -30,6 +31,7 @@ describe('POST /auth/register', () => {
     expect(userInDb.password).not.toBe('secret123');
   });
 
+  // Test for duplicate email registration
   it('rejects a duplicate email', async () => {
     const app = createApp();
 
