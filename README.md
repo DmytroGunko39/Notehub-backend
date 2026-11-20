@@ -121,20 +121,25 @@ instead. All `/auth` routes are rate limited.
 
 ## Tests
 
-Unit tests run with [Vitest](https://vitest.dev).
+Unit tests run with [Vitest](https://vitest.dev), integration tests with
+[supertest](https://github.com/ladjs/supertest) against an in-memory MongoDB.
 
 ```bash
 npm test         # run the suite once
 npm run test:watch   # watch mode
 ```
 
-Current coverage is the pure, dependency-free parts of the codebase:
+Unit tests cover the pure, dependency-free parts of the codebase:
 
 - **Validation schemas** — `createNoteSchema` (title and content bounds, optional tag)
 - **Middleware** — `isValidId` (ObjectId format check and the error it forwards)
 - **Utilities** — `ctrlWrapper` (error forwarding from async controllers)
 
-Integration tests covering the HTTP routes against a test database are planned.
+Integration tests exercise the full request chain — router, middleware, error
+handler and database:
+
+- **Authentication** — `POST /auth/register` (password is hashed before storage, never returned in the response, duplicate email rejected with 409)
+- **Notes** — `GET /notes` without a token (401), and `PATCH /notes/:noteId` by a user who does not own the note (404, note left unchanged)
 
 ## Deployment
 
