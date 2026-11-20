@@ -52,7 +52,7 @@ export const updateNote = async (noteId, userId, updateData) => {
   return await NotesCollection.findOneAndUpdate(
     { _id: noteId, userId },
     updateData,
-    { new: true, runValidators: true },
+    { returnDocument: 'after', runValidators: true },
   );
 };
 
